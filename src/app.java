@@ -30,8 +30,9 @@ public class app extends Applet implements Runnable, KeyListener{
 		gDC = getGraphics();
 		resize(Constants.szerokoscOkna, Constants.wysokoscOkna);
 		
+		
 		pojazd = new pojazd(1500, 1.755, 1.416, 0.32);
-		pojazd.ustawNaped(1000);
+		pojazd.ustawNaped(100000);
 		pojazd.ustawHamulec(1000, 250, 7, 0);
 	}
 	

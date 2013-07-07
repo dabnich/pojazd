@@ -3,13 +3,14 @@
 public class pojazd {
 	
 	public double masa;
-	public double wspTarcia = 0.012;
+	public double wspTarcia = 0.013;
 	double wspAero;
-	double oporMech = 1.15;
+	double oporMech = 1.2;
 	
 	double szerokosc;
 	double wysokosc;
 	double zaokrPoj = 0.79;
+	
 	
 	double predkosc=3;
 	double przyspieszenie;
@@ -61,6 +62,9 @@ public class pojazd {
 		return oporT*predkosc+oporP*predkosc+masa*przyspieszenie*oporMech*predkosc;
 	}
 	
+	
+	
+	
 	public void ustawGaz(double pozycja){
 		naped.ustawPozycje(pozycja);
 	}
@@ -76,7 +80,8 @@ public class pojazd {
 		dystans += predkosc*((double)1/(double)Constants.FPS);
 		naped.kontroluj();
 		hamulec.kontroluj();
-		przyspieszenie = ((naped.sila)/oporMech - obliczOpor())/masa;
+		//przyspieszenie = ((naped.sila)/oporMech - obliczOpor())/masa;
+		przyspieszenie = (naped.moc - oporT*predkosc - oporP*predkosc)/(masa*oporMech*predkosc);
 		przyspieszenie-=hamulec.sila;
 		
 		if(predkosc>0 || przyspieszenie>=0){
