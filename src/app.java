@@ -29,33 +29,10 @@ public class app extends Applet implements Runnable, KeyListener{
 		pracuje = false;
 		gDC = getGraphics();
 		resize(Constants.szerokoscOkna, Constants.wysokoscOkna);
+		
 		pojazd = new pojazd(1500, 1.755, 1.416, 0.32);
-		
-		double rpm[];
-		double moment[];
-		rpm = new double[6];
-		moment = new double[6];
-	
-		rpm[0] = 1000;
-		rpm[1] = 2000;
-		rpm[2] = 3000;
-		rpm[3] = 4000;
-		rpm[4] = 5000;
-		rpm[5] = 5800;
-		
-		moment[0] = 0;
-		moment[1] = 20000;
-		moment[2] = 38000;
-		moment[3] = 50000;
-		moment[4] = 59000;
-		moment[5] = 63000;
-		
-		pojazd.ustawSilnik(rpm, moment);
-		pojazd.wlaczSilnik();
+		pojazd.ustawNaped(1000);
 		pojazd.ustawHamulec(1000, 250, 7, 0);
-		//tr.generujKolo(100, 100, 100);
-		//tr.BresenhamLine(50, 50, 150, 500);
-		
 	}
 	
 	public void start(){
@@ -76,9 +53,9 @@ public class app extends Applet implements Runnable, KeyListener{
 			if(ustHam>Constants.maxPozHam) ustHam=Constants.maxPozHam;
 			if(ustGaz<0) ustGaz=0;
 			if(ustGaz>Constants.maxPozGaz) ustGaz=Constants.maxPozGaz;
-			pojazd.hamowanie(ustHam*Constants.pozHam1);
 			
 			pojazd.ustawGaz(ustGaz*Constants.pozGaz1);
+			pojazd.hamowanie(ustHam*Constants.pozHam1);
 			pojazd.kontroluj();
 			
 			
@@ -97,12 +74,15 @@ public class app extends Applet implements Runnable, KeyListener{
 	public void draw(){
 		gDC.clearRect(0, 0, getWidth(), getHeight());
 		
-		gDC.drawString("Predkosc: "+String.format("%.1f", pojazd.predkosc*3.6), 300, 300);
-		gDC.drawString("gaz: "+Double.toString(pojazd.silnik.pozycja), 300, 340);
-		gDC.drawString("RPM: "+Double.toString(pojazd.silnik.obroty), 300, 380);
-		gDC.drawString("hamulec sila: "+Double.toString(pojazd.hamulec.sila), 300, 420);
-		gDC.drawString("hamulec: "+Double.toString(pojazd.hamulec.pozycja), 300, 460);
-		gDC.drawString("Przyspieszenie: "+Double.toString(pojazd.przyspieszenie), 300, 500);
+		gDC.drawString("Predkosc: "+String.format("%.1f", pojazd.predkosc*3.6)+" km/h", 100, 100);
+		gDC.drawString("Przyspieszenie: "+String.format("%.1f",pojazd.przyspieszenie)+" m/s", 100, 130);
+		gDC.drawString("Opory: "+String.format("%.1f", pojazd.obliczOpor())+" N", 100, 160);
+		gDC.drawString("Moc: "+String.format("%.1f", pojazd.obliczMoc())+" W", 100, 190);
+		gDC.drawString("Pozycja: "+String.format("%.1f", pojazd.naped.pozycja)+" %", 300, 100);
+		gDC.drawString("Sila napêdu: "+String.format("%.1f", pojazd.naped.sila)+" N", 300, 130);
+		gDC.drawString("Hamulec-pozycja: "+String.format("%.1f", pojazd.hamulec.pozycja), 300, 190);
+		gDC.drawString("hamulec-sila: "+String.format("%.1f", pojazd.hamulec.sila)+" %", 300, 220);
+		
 		//gDC.drawString(Double.toString(pojazd.moc), 300, 420);
 		//gDC.drawString(Integer.toString(ustHam), 50, 50);
 		//gDC.drawString(Long.toString(Hamulec.cisnienie), 100, 100);

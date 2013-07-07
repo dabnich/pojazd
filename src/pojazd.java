@@ -22,6 +22,7 @@ public class pojazd {
 	
 	silnik silnik;
 	hamulec hamulec;
+	naped naped;
 
 	
 	public void ustawSilnik(double rpm[], double[] moment){
@@ -31,6 +32,10 @@ public class pojazd {
 		}
 		this.silnik = new silnik((long)( (double)max/40 ));
 		this.silnik.ustawMoment(rpm, moment);
+	}
+	
+	public void ustawNaped(double maxSila){
+		naped = new naped(maxSila);
 	}
 	
 	public void ustawHamulec(double maxCisnienie, double maxPrzeplyw, double skutecznosc, long opoznienie){
@@ -53,14 +58,11 @@ public class pojazd {
 	}
 	
 	public double obliczMoc(){
-		if(przyspieszenie<=0)
-			return oporT*predkosc+oporP*predkosc;
-		else
-			return oporT*predkosc+oporP*predkosc+masa*przyspieszenie*oporMech;
+		return oporT*predkosc+oporP*predkosc+masa*przyspieszenie*oporMech;
 	}
 	
 	public void ustawGaz(double pozycja){
-		silnik.ustawPozycje(pozycja);
+		naped.ustawPozycje(pozycja);
 	}
 	
 	public void hamowanie(double pozycja){
@@ -70,32 +72,19 @@ public class pojazd {
 	
 	
 	public void kontroluj(){
-		//przyspieszenie = (double)(silnik.pozycja/(double)100)/(double)Constants.FPS;
+
 		dystans += predkosc*((double)1/(double)Constants.FPS);
-		
-		//opor = obliczOpor();
-		//if(predkosc==0)opor=0;
-		//if(silnik.obroty)
-		silnik.kontroluj();
+		naped.kontroluj();
 		hamulec.kontroluj();
-		silnik.obroty = (long)(silnik.minObroty+(predkosc/(double)45)*(double)(silnik.maxObroty-silnik.minObroty));
-		obliczOpor();
-		//przyspieszenie = ( (double)silnik.obliczMoc()-oporT*predkosc-oporP*predkosc )/masa/oporMech;
-		if(silnik.moc>0){
-			przyspieszenie = (double)(silnik.maxSila/oporMech - obliczOpor())/masa;
-			double wsp = (double)(silnik.maxMoc/obliczMoc())*(silnik.moc/silnik.maxMoc);
-			przyspieszenie = (((silnik.pozycja/(double)100)*(double)silnik.maxSila)/oporMech - obliczOpor())/masa;
-			if(przyspieszenie>0) przyspieszenie *= wsp;
-		}
-		else{
-			przyspieszenie = 0-(obliczOpor()/masa);
-		}
+		przyspieszenie = ((naped.sila)/oporMech - obliczOpor())/masa;
+		przyspieszenie-=hamulec.sila;
+		
 		if(predkosc>0 || przyspieszenie>=0){
-			przyspieszenie-=hamulec.sila;
 			predkosc+=(przyspieszenie/(double)Constants.FPS);
 		}
 		else{
-
+			przyspieszenie=0;
+			predkosc=0;
 		}
 	}
 	
