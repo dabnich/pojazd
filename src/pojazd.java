@@ -58,7 +58,7 @@ public class pojazd {
 	}
 	
 	public double obliczMoc(){
-		return oporT*predkosc+oporP*predkosc+masa*przyspieszenie*oporMech;
+		return oporT*predkosc+oporP*predkosc+masa*przyspieszenie*oporMech*predkosc;
 	}
 	
 	public void ustawGaz(double pozycja){
