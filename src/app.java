@@ -2,19 +2,25 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.*;
-import java.math.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 
-public class app extends Applet implements Runnable, KeyListener{
+public class app extends Applet implements Runnable, KeyListener, MouseListener, MouseMotionListener{
 	
+	boolean pracuje;
+	
+	int ustHam, ustGaz;
 	char relased;
 	char typed;
 	char pressed;
-	boolean pracuje;
 	
-	int ustHam;
-	int ustGaz;
+	int myszX, myszY;
+	int myszXstart, myszYstart;
+	
+	boolean myszClick = false;
+	boolean myszRelased = false;
 	
 	Graphics gDC;
 	Graphics gPredkTxt;
@@ -28,12 +34,11 @@ public class app extends Applet implements Runnable, KeyListener{
 	
 	suwak suwGaz = new suwak(100, 30, 300, 300);
 	
-	//trasa tr = new trasa();
-	
-	
-	
+
 	public void init(){
 		addKeyListener(this);
+		addMouseListener(this);
+		addMouseMotionListener(this);
 		pracuje = false;
 		gDC = getGraphics();
 		gPredkPlansza = getGraphics();
@@ -68,14 +73,10 @@ public class app extends Applet implements Runnable, KeyListener{
 			}
 			catch(InterruptedException exc){};
 			
-			if(ustHam<0) ustHam=0;
-			if(ustHam>Constants.maxPozHam) ustHam=Constants.maxPozHam;
-			if(ustGaz<0) ustGaz=0;
-			if(ustGaz>Constants.maxPozGaz) ustGaz=Constants.maxPozGaz;
+			sterowanie();
 			
-			suwGaz.ustawWartosc(ustGaz*Constants.pozGaz1);
-			
-			pojazd.ustawGaz(ustGaz*Constants.pozGaz1);
+			//pojazd.ustawGaz(ustGaz*Constants.pozGaz1);
+			pojazd.ustawGaz(suwGaz.wartosc);
 			pojazd.hamowanie(ustHam*Constants.pozHam1);
 			pojazd.kontroluj();
 			
@@ -98,15 +99,40 @@ public class app extends Applet implements Runnable, KeyListener{
 		gDC.drawString("Sila napêdu: "+String.format("%.2f", pojazd.naped.moc/1000)+" kW", 300, 130);
 		gDC.drawString("Hamulec-pozycja: "+String.format("%.1f", pojazd.hamulec.pozycja), 300, 190);
 		gDC.drawString("hamulec-sila: "+String.format("%.1f", pojazd.hamulec.sila)+" %", 300, 220);
-		gDC.drawString("ps: "+Double.toString(pojazd.maxPrzyspieszenie), 30, 30);
 		predkosciomierz(pojazd.predkosc, pojazd.maxPredkosc, 300, 400, 120);
 		przyspniomierz(pojazd.przyspieszenie, pojazd.maxPrzyspieszenie, pojazd.hamulec.skutecznosc, 600, 200, 450);
+		
 		gDC.drawRect(suwGaz.pozX, suwGaz.pozY, suwGaz.szerokosc, suwGaz.dlugoscDraw);
 		gDC.fillRect(suwGaz.wskX, suwGaz.wskY, suwGaz.szerokosc, suwGaz.uchwytWys);
 		//gDC.drawString(Double.toString(pojazd.moc), 300, 420);
 		//gDC.drawString(Integer.toString(ustHam), 50, 50);
 		//gDC.drawString(Long.toString(Hamulec.cisnienie), 100, 100);
 	}
+	
+	public void kontrolujMysz(){
+		if(myszClick==true) {
+			if(suwGaz.czyKlikniety(myszX, myszY)) suwGaz.ustawiany=true;
+		}
+		else {
+			suwGaz.ustawiany=false;
+		}
+		
+		if(suwGaz.ustawiany){
+			suwGaz.ustawWartosc((int)myszY);
+		}
+		
+	}
+	
+	public void sterowanie(){
+		if(ustHam<0) ustHam=0;
+		if(ustHam>Constants.maxPozHam) ustHam=Constants.maxPozHam;
+		if(ustGaz<0) ustGaz=0;
+		if(ustGaz>Constants.maxPozGaz) ustGaz=Constants.maxPozGaz;
+		kontrolujMysz();
+		//if(ustGaz*Constants.pozGaz1 
+	}
+	
+
 	
 	public void predkosciomierz(double predkosc, double maxPredkosc, int srodekX, int srodekY, double promien){
 		
@@ -131,13 +157,11 @@ public class app extends Applet implements Runnable, KeyListener{
     		textY=(wY-wY2);
     		gPredkTxt.drawString(Integer.toString(tmpPredkosc), wX+textX-7, wY+textY+2);
 
-    		
     		tmpPredkosc+=10;
         }
 		wX = (int)(srodekX+(promien*wspOdstepu)*Math.cos(-1.25*Math.PI+(predkosc/maxPredkosc)*Math.PI*1.5));
         wY = (int)(srodekY+(promien*wspOdstepu)*Math.sin(-1.25*Math.PI+(predkosc/maxPredkosc)*Math.PI*1.5));
         //gLicznikTxt.drawLine(srodekX, srodekY, wX, wY);
-        
         gPredkWskazowka.drawLine(srodekX, srodekY, wX, wY);
 	}
 	
@@ -172,8 +196,7 @@ public class app extends Applet implements Runnable, KeyListener{
 	}
 	
 	public void keyPressed(KeyEvent evt){
-		pressed = evt.getKeyChar();
-		//repaint();
+		//pressed = evt.getKeyChar();
 	}
 	
 	public void keyTyped(KeyEvent evt){
@@ -182,18 +205,44 @@ public class app extends Applet implements Runnable, KeyListener{
 		if(typed=='a') ustHam-=1;
 		if(typed=='+') ustGaz+=1;
 		if(typed=='-') ustGaz-=1;
-		//repaint();
 	}
 
 	
 	public void keyReleased(KeyEvent evt) {
-		// TODO Auto-generated method stub
-		relased = evt.getKeyChar();
-		//repaint();
+		//relased = evt.getKeyChar();
+	}
+	
+	public void mouseClicked(MouseEvent evt){
+
 	}
 
+	public void mouseEntered(MouseEvent evt){
 
+	}
 	
+	public void mouseExited(MouseEvent evt){
+
+	}
 	
+	public void mousePressed(MouseEvent evt){
+		myszClick = true;
+	}
 	
+	public void mouseReleased(MouseEvent evt){
+		myszClick = false;
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		myszX = e.getX();
+		myszY = e.getY();
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		//myszX = e.getX();
+		//myszY = e.getY();
+	}
 }

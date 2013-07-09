@@ -2,10 +2,10 @@
 
 public class Constants {
 	
-	public static final int szerokoscOkna = 600;
-	public static final int wysokoscOkna = 480;
+	public static final int szerokoscOkna = 800;
+	public static final int wysokoscOkna = 600;
 	
-	public static final int FPS = 40;
+	public static final int FPS = 25;
 	public static final int maxPozHam = 100;
 	public static final int maxPozGaz = 100;
 	public static final float pozHam1 = 100/(float)maxPozHam;
