@@ -26,6 +26,8 @@ public class app extends Applet implements Runnable, KeyListener{
 	
 	pojazd pojazd;
 	
+	suwak suwGaz = new suwak(100, 30, 300, 300);
+	
 	//trasa tr = new trasa();
 	
 	
@@ -71,15 +73,13 @@ public class app extends Applet implements Runnable, KeyListener{
 			if(ustGaz<0) ustGaz=0;
 			if(ustGaz>Constants.maxPozGaz) ustGaz=Constants.maxPozGaz;
 			
+			suwGaz.ustawWartosc(ustGaz*Constants.pozGaz1);
+			
 			pojazd.ustawGaz(ustGaz*Constants.pozGaz1);
 			pojazd.hamowanie(ustHam*Constants.pozHam1);
 			pojazd.kontroluj();
 			
-			
 			draw();
-			
-
-			//gDC.drawString(Character.toString(relased), 50, 50);
 		}
 		
 	}
@@ -101,6 +101,8 @@ public class app extends Applet implements Runnable, KeyListener{
 		gDC.drawString("ps: "+Double.toString(pojazd.maxPrzyspieszenie), 30, 30);
 		predkosciomierz(pojazd.predkosc, pojazd.maxPredkosc, 300, 400, 120);
 		przyspniomierz(pojazd.przyspieszenie, pojazd.maxPrzyspieszenie, pojazd.hamulec.skutecznosc, 600, 200, 450);
+		gDC.drawRect(suwGaz.pozX, suwGaz.pozY, suwGaz.szerokosc, suwGaz.dlugoscDraw);
+		gDC.fillRect(suwGaz.wskX, suwGaz.wskY, suwGaz.szerokosc, suwGaz.uchwytWys);
 		//gDC.drawString(Double.toString(pojazd.moc), 300, 420);
 		//gDC.drawString(Integer.toString(ustHam), 50, 50);
 		//gDC.drawString(Long.toString(Hamulec.cisnienie), 100, 100);
@@ -163,11 +165,10 @@ public class app extends Applet implements Runnable, KeyListener{
 			gPrzyspTxt.drawString(Double.toString(i), pozX+35, pozY);
 		}
 	}
-	
 
 	
 	public void paint(Graphics gd){
-
+		
 	}
 	
 	public void keyPressed(KeyEvent evt){
