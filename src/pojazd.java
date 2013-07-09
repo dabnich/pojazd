@@ -6,6 +6,8 @@ public class pojazd {
 	public double wspTarcia = 0.013;
 	double wspAero;
 	double oporMech = 1.2;
+	double maxPredkosc;
+	double maxPrzyspieszenie;
 	
 	double szerokosc;
 	double wysokosc;
@@ -37,6 +39,8 @@ public class pojazd {
 	
 	public void ustawNaped(double maxSila){
 		naped = new naped(maxSila);
+		maxPredkosc = obliczMaxPredkosc();
+		maxPrzyspieszenie = obliczMaxPrzyspieszenie();
 	}
 	
 	public void ustawHamulec(double maxCisnienie, double maxPrzeplyw, double skutecznosc, long opoznienie){
@@ -50,6 +54,31 @@ public class pojazd {
 		this.wysokosc = wysokosc;
 		this.wspAero = wspAero;
 	}
+	
+	public double obliczMaxPredkosc(){
+		double predkosc = 0.1;
+		double przyspieszenie = 1;
+		double oporT, oporP;
+		while(przyspieszenie>0.01){
+			oporT = (double)masa*Constants.grawitacja*wspTarcia;
+			oporP = wspAero*(Constants.gestPowietrza/2)*(szerokosc*wysokosc*zaokrPoj)*(predkosc*predkosc);
+			przyspieszenie = (naped.maxMoc - oporT*predkosc - oporP*predkosc)/(masa*oporMech*predkosc);
+			predkosc+=(double)1/(double)3.6;
+		}
+		return predkosc;
+	}
+	
+	public double obliczMaxPrzyspieszenie(){
+		//return naped.maxMoc/masa*oporMech;
+		double przyspieszenie;
+		double predkosc = obliczMaxPredkosc()/8;
+		double oporT, oporP;
+		oporT = (double)masa*Constants.grawitacja*wspTarcia;
+		oporP = wspAero*(Constants.gestPowietrza/2)*(szerokosc*wysokosc*zaokrPoj)*(predkosc*predkosc);
+		przyspieszenie = (naped.maxMoc - oporT*predkosc - oporP*predkosc)/(masa*oporMech*predkosc);
+		return przyspieszenie;
+	}
+	
 	
 	public double obliczOpor(){
 		oporT = (double)masa*Constants.grawitacja*wspTarcia;

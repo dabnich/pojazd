@@ -12,7 +12,7 @@ public class naped {
 	public void kontroluj(){
 		moc = maxMoc*(pozycja/100);
 		//if(sila>maxSila) sila = maxSila;
-		if(sila<0) sila = 0;  //w przyszlosci to sie zlikwiduje - zastosuje ci¹g wsteczny (BHP)
+		//if(sila<0) sila = 0;  //w przyszlosci to sie zlikwiduje - zastosuje ci¹g wsteczny (BHP)
 	}
 	
 	public void ustawPozycje(double pozycja){
